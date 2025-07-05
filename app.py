@@ -28,16 +28,30 @@ app = Flask(__name__)
 # Hassas bilgileri ortam değişkenlerinden al!
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'default_secret_key_please_change_it_make_it_long')
 
-# VERİTABANI AYARI: Heroku'da DATABASE_URL ortam değişkenini kullan, yerelde SQLite kullan
-# DATABASE CONFIG: Use DATABASE_URL env var on Heroku, use SQLite locally
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
-# Heroku Postgres URL'si 'postgres://...' şeklinde gelir, ama SQLAlchemy 'postgresql://...' bekler
-if app.config['SQLALCHEMY_DATABASE_URI'] and app.config['SQLALCHEMY_DATABASE_URI'].startswith('postgres://'):
-    app.config['SQLALCHEMY_DATABASE_URI'] = app.config['SQLALCHEMY_DATABASE_URI'].replace('postgres://', 'postgresql://', 1)
-else:
-    # Yerel ortamda DATABASE_URL yoksa SQLite kullan
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'users_and_passwords.db')
+# ... (app = Flask(__name__) öncesi)
 
+# Veritabanı Yapılandırması: Heroku'da DATABASE_URL ortam değişkenini kullan
+# Eğer DATABASE_URL yoksa, bu bir hata olarak kabul edilir ve uygulama başlamaz.
+# Bu, sorunun nedenini daha net görmemizi sağlar.
+database_url = os.getenv('DATABASE_URL')
+
+if database_url is None:
+    # Sadece yerel geliştirme için SQLite fallback'i (Heroku'da bu çalışmamalı)
+    print("WARNING: DATABASE_URL not found in environment. Using SQLite. This should not happen on Heroku.")
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'users_and_passwords.db')
+elif database_url.startswith('postgres://'):
+    # Heroku Postgres URL'si 'postgres://...' şeklinde gelir, ama SQLAlchemy 'postgresql://...' bekler
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url.replace('postgres://', 'postgresql://', 1)
+elif database_url.startswith('postgresql://'):
+    # Zaten doğru formatta ise
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
+else:
+    # Bilinmeyen bir protokol ise hata ver
+    raise ValueError(f"Unsupported database URL scheme: {database_url}")
+
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Gereksiz uyarıları kapatır
+
+# ... (db = SQLAlchemy(app) ve diğer kodlar devam eder)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Gereksiz uyarıları kapatır
 
 
