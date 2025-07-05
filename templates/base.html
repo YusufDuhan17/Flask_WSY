@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Şifre Yöneticisi{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    {# Flash Mesaj Modalı Buraya Gelecek (JS Tarafından Kontrol Edilecek) #}
+    <div id="flash-modal" class="flash-modal">
+        <div class="flash-modal-content">
+            <span class="flash-modal-close-button">&times;</span>
+            <div id="flash-modal-message-area">
+                {# Mesajlar JavaScript ile buraya eklenecek #}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-key"></i> 
+            </div>
+            <nav class="menu">
+                <ul>
+                    <li data-path="{{ url_for('dashboard') }}">
+                        <a href="{{ url_for('dashboard') }}">
+                            <i class="fas fa-lock"></i>
+                            <span>Şifrelerim</span>
+                        </a>
+                    </li>
+                    <li data-path="{{ url_for('add_password') }}">
+                        <a href="{{ url_for('add_password') }}">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Şifre Ekle</span>
+                        </a>
+                    </li>
+                    <li data-path="{{ url_for('logout') }}">
+                        <a href="{{ url_for('logout') }}">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Çıkış Yap</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <div class="profile">
+                <div class="avatar">
+                    {% if user and user.username %}
+                        <span class="avatar-text">{{ user.username[0]|upper }}</span>
+                    {% else %}
+                        <i class="fas fa-user default-avatar-icon"></i>
+                    {% endif %}
+                </div>
+                <div class="user-info">
+                    <h3>{% if user %}{{ user.username }}{% else %}Misafir{% endif %}</h3>
+                    <p class="user-email-display">{% if user %}{{ user.email }}{% else %}Giriş Yapın{% endif %}</p>
+                </div>
+            </div>
+        </aside>
+        <main class="content">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+    {# Flask flash mesajlarını JavaScript'e aktarma (Flask v2.x ve üzeri için tojson | safe) #}
+    <script>
+        const flaskFlashMessages = JSON.parse('{{ get_flashed_messages(with_categories=true) | tojson | safe }}');
+    </script>
+    {% block body_extra %}{% endblock %}
+</body>
+</html>

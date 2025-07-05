@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}E-posta Doğrula - Şifre Yöneticisi{% endblock %}
+
+{% block content %}
+    <header class="content-header">
+        <h1>E-posta Doğrulama</h1>
+    </header>
+    <form method="POST" action="{{ url_for('confirm_email') }}" class="content-form">
+        <h2>E-posta Adresinizi Doğrulayın</h2>
+        <p>Kayıtlı e-posta adresinize gönderilen 6 haneli kodu buraya girin.</p>
+        <label for="code">Doğrulama Kodu:</label>
+        <input type="text" id="code" name="code" required pattern="\d{6}" title="Lütfen 6 haneli kodu girin." maxlength="6">
+        <button type="submit" class="button primary-button">Kodu Doğrula</button>
+    </form>
+{% endblock %}

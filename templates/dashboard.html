@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Şifrelerim - Şifre Yöneticisi{% endblock %}
+
+{% block content %}
+    <header class="content-header">
+        <h1>Şifrelerin</h1>
+        <p>Hoş Geldin, {{ user.username }}!</p>
+    </header>
+    
+    <div class="content-actions">
+        <a href="{{ url_for('add_password') }}" class="button primary-button">Yeni Şifre Ekle</a>
+    </div>
+
+    <div class="password-grid">
+        {% for pwd in passwords %}
+        <div class="password-card">
+            <div class="card-header">
+                <h3>{{ pwd.site }}</h3>
+                <span class="strength-indicator strength-{{ pwd.strength.split(' ')[0] }}">{{ pwd.strength }}</span>
+            </div>
+            <div class="card-body">
+                <p><strong>Kullanıcı Adı:</strong> <span class="username-display">{{ pwd.username }}</span></p>
+                <p><strong>Şifre:</strong> <span id="password_display_{{ pwd.id }}" data-original-password="{{ pwd.password }}"></span></p>
+                <p><strong>Kategori:</strong> <span class="category-tag category-{{ pwd.category.replace(' ', '-').lower() }}">{{ pwd.category }}</span></p>
+            </div>
+            <div class="card-actions">
+                <button class="button show-hide-btn" onclick="togglePasswordVisibility(this, {{ pwd.id }})">Göster</button>
+                <button class="button copy-password-btn" onclick="copyToClipboard(this)">Kopyala</button> 
+                <a href="{{ url_for('update_password', password_id=pwd.id) }}" class="button secondary-button">Düzenle</a>
+                <form action="{{ url_for('delete_password', password_id=pwd.id) }}" method="post" style="display:inline-block;">
+                    <button type="submit" class="button delete-button" onclick="return confirm('Bu şifreyi silmek istediğinizden emin misiniz?');">Sil</button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <p class="no-passwords">Henüz kaydedilmiş şifreniz yok.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

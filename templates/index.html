@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Ana Sayfa - Şifre Yöneticisi{% endblock %}
+
+{% block content %}
+    <header class="content-header">
+        <h1>Web Şifre Yöneticisi</h1>
+    </header>
+    <div class="content-card">
+        <h2>Hesap Yönetimi</h2>
+        <p>Güvenli şifrelerinizi yönetmek için giriş yapın veya yeni bir hesap oluşturun.</p>
+        <div class="auth-buttons">
+            <a href="{{ url_for('login') }}" class="button primary-button">Giriş Yap</a>
+            <a href="{{ url_for('register') }}" class="button accent-button">Kayıt Ol</a>
+        </div>
+    </div>
+{% endblock %}

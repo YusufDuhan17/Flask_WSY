@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}Giriş Yap - Şifre Yöneticisi{% endblock %}
+
+{% block content %}
+    <header class="content-header">
+        <h1>Giriş Yap</h1>
+    </header>
+    <form method="POST" action="{{ url_for('login') }}" class="content-form">
+        <h2>Giriş Yap</h2>
+        <label for="username">Kullanıcı Adı:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="password">Şifre:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit" class="button primary-button auth-submit-button">Giriş Yap</button> {# Yeni sınıf eklendi #}
+        <p>Hesabın yok mu? <a href="{{ url_for('register') }}">Kayıt Ol</a></p>
+        <p><a href="{{ url_for('forgot_password') }}">Şifremi unuttum</a></p> 
+    </form>
+{% endblock %}
